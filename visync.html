@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ViSync · Merlano Interactive</title>
+<meta name="description" content="Un sistema de accesibilidad para personas ciegas y con baja visión, hecho de tres módulos que funcionan por separado. Lo construimos en equipo entre ag" />
+<meta property="og:title" content="ViSync" />
+<meta property="og:description" content="Un sistema de accesibilidad para personas con discapacidad visual, hecho de tres módulos que funcionan por separado. Lo construimos en equipo entre agosto y noviembre de 2025, sobr" />
+<meta property="og:image" content="https://simonmerlano.github.io/og-visync.jpg" />
+<meta property="og:type" content="article" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#22252E;--bg-2:#2B2F3A;--line:#3C414F;--line-soft:rgba(255,255,255,.07);
+    --ink:#F2F3F6;--ink-2:#B9BFCC;--ink-3:#8E96A6;--red:#FF0048;--red-soft:rgba(255,0,72,.10);
+    --radius:4px;--readw:660px;
+    --mono:'JetBrains Mono',ui-monospace,monospace;--disp:'Inter Tight','Inter',sans-serif;--body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  ::selection{background:var(--red);color:#fff}
+  :focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:2px}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none !important;transition:none !important}}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--red);color:#fff;padding:10px 16px;z-index:100}
+  .skip:focus{left:12px;top:12px}
+  .prog{position:fixed;top:0;left:0;height:2px;background:var(--red);width:0;z-index:60}
+  header.nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(34,37,46,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft)}
+  .nav-in{max-width:1080px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+  .back{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--ink-2);text-decoration:none}
+  .back:hover{color:var(--red)}
+  .navcta{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-decoration:none;border:1px solid var(--line);padding:8px 14px;border-radius:var(--radius)}
+  .navcta:hover{border-color:var(--red);color:var(--red)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .read{max-width:var(--readw);margin:0 auto}
+  .hero{padding:130px 0 48px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
+  .eyebrow b{color:var(--red);font-weight:500}
+  h1{font-family:var(--disp);font-weight:900;font-size:clamp(38px,6vw,68px);line-height:1.02;letter-spacing:-.025em;margin:18px 0 20px}
+  .standfirst{font-size:clamp(18px,2.2vw,21px);color:var(--ink-2);line-height:1.6;max-width:720px}
+  .meta{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:56px}
+  .meta-in{max-width:1080px;margin:0 auto;padding:22px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .meta dt{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
+  .meta dd{font-size:14px;color:var(--ink);line-height:1.4}
+  @media(max-width:720px){.meta-in{grid-template-columns:repeat(2,1fr);gap:16px}}
+  main.wrap{padding-top:112px;padding-bottom:40px}
+  main section:first-child h2{margin-top:0}
+  section{margin-bottom:76px}
+  h2{font-family:var(--disp);font-weight:800;font-size:clamp(26px,3.4vw,34px);line-height:1.15;letter-spacing:-.02em;margin-bottom:20px}
+  h2 .n{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.2em;color:var(--red);display:block;margin-bottom:12px}
+  h3{font-family:var(--disp);font-weight:700;font-size:20px;margin:34px 0 12px;letter-spacing:-.01em}
+  p{margin-bottom:20px;color:var(--ink-2)}
+  p strong{color:var(--ink);font-weight:600}
+  main ul{margin:0 0 20px 20px;color:var(--ink-2)}
+  main li{margin-bottom:9px}
+  .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0}
+  @media(max-width:600px){.stat{grid-template-columns:1fr}}
+  .stat div{border:1px solid var(--line-soft);border-left:2px solid var(--red);border-radius:var(--radius);padding:18px}
+  .stat .big{font-family:var(--disp);font-size:28px;font-weight:800;color:var(--ink);line-height:1}
+  .stat .lbl{font-size:13px;color:var(--ink-3);margin-top:8px;display:block}
+  .mod{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:var(--bg-2);margin-bottom:14px}
+  .mod .mn{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:10px;display:block}
+  .mod h4{font-family:var(--disp);font-size:18px;font-weight:700;margin-bottom:6px}
+  .mod p{font-size:15px;margin:0;color:var(--ink-2)}
+  table{width:100%;border-collapse:collapse;margin:26px 0;font-size:15px}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line-soft)}
+  th{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);border-bottom:1px solid var(--line)}
+  td:first-child{font-weight:600;color:var(--ink)}
+  td{color:var(--ink-2)}
+  .note{border-left:2px solid var(--red);background:var(--red-soft);padding:24px 26px 6px;border-radius:0 var(--radius) var(--radius) 0;margin:30px 0}
+  figure{margin:38px 0}
+  figure img,figure video{width:100%;display:block;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
+  figure video.tall{max-width:360px;margin:0 auto}
+  figure video{background:#000}
+  figure video::-webkit-media-controls-panel{background:linear-gradient(transparent,rgba(0,0,0,.7))}
+  .ph{width:100%;aspect-ratio:16/9;border:1px dashed var(--line);border-radius:var(--radius);background:var(--bg-2);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+  .ph span{font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.06em;line-height:1.7;max-width:420px}
+  figcaption{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:10px;letter-spacing:.03em;line-height:1.65}
+  .full{max-width:1080px;margin-left:auto;margin-right:auto}
+  .close{border-top:1px solid var(--line);padding:56px 0 0}
+  .close h2{font-size:clamp(28px,4vw,40px)}
+  .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+  .links a{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-decoration:none;border:1px solid var(--line);padding:12px 18px;border-radius:var(--radius)}
+  .links a:hover{border-color:var(--red);color:var(--red)}
+  .links a.solid{background:var(--red);border-color:var(--red);color:#fff}
+  .links a.solid:hover{background:#e60041;color:#fff}
+  .nextcase{display:block;text-decoration:none;border:1px solid var(--line);border-radius:var(--radius);padding:26px;margin:64px 0 0;background:var(--bg-2)}
+  .nextcase:hover{border-color:var(--red)}
+  .nextcase .k{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+  .nextcase h3{margin:8px 0 0;font-size:24px}
+  footer{border-top:1px solid var(--line-soft);margin-top:64px;padding:26px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  footer span{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="prog" id="prog" aria-hidden="true"></div>
+<header class="nav">
+  <div class="nav-in">
+    <a class="back" href="index.html">← MERLANO<span style="color:var(--red)">.</span>INTERACTIVE</a>
+    <a class="navcta" href="CV_Simon_Merlano_Sarmiento.pdf" download>↓ CV</a>
+  </div>
+</header>
+<div class="wrap hero">
+  <p class="eyebrow">CASO DE ESTUDIO <b>/</b> ACCESIBILIDAD · HARDWARE + APP</p>
+  <h1>ViSync</h1>
+  <p class="standfirst">Un sistema de accesibilidad para personas ciegas y con baja visión, hecho de tres módulos que funcionan por separado. Lo construimos en equipo entre agosto y noviembre de 2025, sobre Arduino.</p>
+</div>
+<div class="meta"><dl class="meta-in"><div><dt>Rol</dt><dd>UX/UI + desarrollo de app</dd></div><div><dt>Equipo</dt><dd>3 personas · con I. Herazo y S. Sarmiento</dd></div><div><dt>Duración</dt><dd>300 horas · ago–nov 2025</dd></div><div><dt>Herramientas</dt><dd>Figma · Arduino · Unity</dd></div></dl></div>
+<main id="contenido" class="wrap">
+  <div class="read">
+
+    <section>
+      <h2><span class="n">01 / CONTEXTO</span>Qué construimos</h2>
+      <p>ViSync está hecho para <strong>personas ciegas y con baja visión</strong>. Son tres módulos: una gorra con sensor ultrasónico que convierte obstáculos en vibración, una app de emergencias que se activa acercando el teléfono a un punto NFC, y una interfaz Braille expandida.</p>
+      <p>Cada módulo atiende una necesidad distinta y ninguno depende de los otros para funcionar.</p>
+      <figure class="full">
+        <img src="img/visync-sistema.jpg" alt="Gorra ViSync con sensor ultrasónico HC-SR04 y Arduino Nano montados sobre la visera" loading="lazy" />
+        <figcaption>Módulo de movilidad. El sensor va al frente de la visera, a la altura de la cabeza.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2><span class="n">02 / EL RETO</span>Diseñar para quien no ve la pantalla</h2>
+      <p>Nunca habíamos diseñado para personas ciegas. Todos los proyectos anteriores partían del mismo supuesto, que hay alguien mirando una pantalla. Acá ese supuesto no existía y tocaba desarmar la forma en que uno diseña por defecto.</p>
+      <p>Eso fue lo difícil. No la parte técnica, sino aceptar que casi todo lo que uno da por sentado sobre una interfaz viene de asumir que alguien la está mirando.</p>
+      <p>Investigando también nos topamos con algo incómodo. La palabra inclusión se usa mucho, pero buena parte de lo que se llama diseño inclusivo termina dejando por fuera justo a quienes más lo necesitan. Se diseña para el promedio, se le pone la etiqueta y ahí queda.</p>
+
+      <h3>Lo que encontramos</h3>
+      <div class="stat">
+        <div><span class="big">2.200 M</span><span class="lbl">personas con discapacidad visual en el mundo</span></div>
+        <div><span class="big">1,3 M</span><span class="lbl">en Colombia</span></div>
+        <div><span class="big">6</span><span class="lbl">entrevistas, incluida la del director del INCI</span></div>
+      </div>
+      <p>Las entrevistas terminaron de cambiar el rumbo. Llegamos pensando en un dispositivo y encontramos necesidades separadas que no tenían por qué resolverse con el mismo aparato. Moverse sin chocar, poder pedir ayuda rápido y leer sin depender de nadie son tres cosas con lógicas distintas.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">03 / DECISIÓN</span>Tres módulos en vez de un aparato para todo</h2>
+      <p>La tentación era juntarlo todo en un solo dispositivo. Decidimos no hacerlo. Un aparato multiuso habría resuelto las tres cosas a medias y habría sido más difícil de usar que tres piezas simples.</p>
+
+      <div class="mod">
+        <span class="mn">Módulo 01 · Movilidad</span>
+        <h4>Gorra ultrasónica háptica</h4>
+        <p>Detecta obstáculos y responde con vibración. Cubre la zona alta que el bastón no alcanza, que es justamente donde están las ramas, los avisos y los bordes de las puertas.</p>
+      </div>
+      <div class="mod">
+        <span class="mn">Módulo 02 · Emergencia</span>
+        <h4>App con activación NFC</h4>
+        <p>Acercar el teléfono al punto NFC dispara todo: abre la app, toma la ubicación y manda un mensaje de WhatsApp al contacto guardado. Acercar dos objetos es una acción que se completa sin ver, cosa que no pasa con buscar un botón en pantalla.</p>
+      </div>
+      <div class="mod">
+        <span class="mn">Módulo 03 · Información</span>
+        <h4>Interfaz Braille expandida</h4>
+        <p>Acceso autónomo a información escrita, con varios modos de navegación, para que la persona no necesite a alguien que vea.</p>
+      </div>
+
+      <p>Lo que comparten los tres es que están pensados para el tacto y el oído. El NFC funciona porque acercar es una acción táctil. El Braille es el canal de lectura propio. Y la vibración existe porque el oído ya está trabajando: alguien que camina por la calle lo está usando para orientarse, y meterle sonidos encima compite con eso.</p>
+
+      <figure class="full">
+        <img src="img/visync-detalle.jpg" alt="Detalle del montaje: Arduino Nano, protoboard y cableado sobre la visera" loading="lazy" />
+        <figcaption>Montaje en protoboard. Lo dejamos así a propósito para poder mover el sensor de sitio durante las pruebas.</figcaption>
+      </figure>
+
+      <h3>Lo técnico</h3>
+      <p>El hardware corre sobre Arduino Leonardo y UNO con un módulo NFC. Lo que más costó no fue el sensado, fue el módulo de emergencia.</p>
+      <p>La idea era que un solo gesto disparara una cadena completa: acercar el teléfono al punto NFC, que eso abra la app, que la app tome la ubicación, y que con el número guardado arme y envíe el mensaje por WhatsApp de forma automática.</p>
+      <p>Cada eslabón por separado es sencillo. Encadenarlos no. El NFC tiene que emitir un patrón codificado que el teléfono interprete correctamente, la app tiene que arrancar y pedir la ubicación sin que nadie toque nada, y el mensaje tiene que salir armado con esa ubicación adentro. Si un paso falla, la persona se queda esperando un mensaje que nunca salió, que es justo el escenario que el módulo debía evitar.</p>
+      <p>Diseñar para que no haya pasos manuales fue el requisito que hizo difícil la implementación, pero era innegociable: alguien en emergencia no va a navegar una interfaz.</p>
+
+      <h3>Probarlo con quien lo va a usar</h3>
+      <p>Llevamos el prototipo a prueba con personas ciegas y con baja visión. No con compañeros de clase con los ojos vendados, que es lo que suele pasar en proyectos de universidad y no sirve: alguien que ve todos los días no navega igual que quien lleva años haciéndolo sin ver.</p>
+      <figure class="full">
+        <video controls muted loop playsinline preload="metadata" poster="img/visync-prueba-poster.jpg" aria-label="Prueba de ViSync con una usuaria ciega dando retroalimentación">
+          <source src="media/visync-prueba.mp4" type="video/mp4">
+        </video>
+        <figcaption>Prueba con usuaria real. El audio trae la retroalimentación directa, que fue lo que orientó los ajustes.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <div class="note">
+        <h2><span class="n">04 / SIGUIENTE ITERACIÓN</span>Qué cambiaría</h2>
+        <p>La gorra es incómoda. Pesa más de lo que debería y se siente engorrosa después de un rato, que es exactamente lo contrario de lo que necesita alguien que va a usarla todos los días.</p>
+        <p>Y hay un problema que no es técnico. En Bogotá, andar por la calle con un Arduino visible encima de la cabeza es un riesgo de seguridad. El dispositivo llama la atención sobre alguien que ya está en una posición vulnerable. Eso no lo resolvimos, y no se arregla ajustando el sensor: obliga a repensar la forma, el material y qué tan visible es el aparato.</p>
+        <p>La siguiente versión parte de un requisito que en la primera tratamos como acabado: <strong>el dispositivo tiene que desaparecer dentro de la prenda.</strong> Componentes integrados en vez de protoboard, batería distribuida en el ala para repartir el peso, y cero electrónica a la vista.</p>
+        <p>Eso no es un detalle de forma. Un dispositivo de asistencia que llama la atención sobre quien lo usa deja de asistir.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="n">05 / CIERRE</span>Lo que me llevé</h2>
+      <p>Los tres módulos quedaron funcionando y alcanzamos a probarlos con personas ciegas y con baja visión, que era la meta desde el principio. Ver a alguien usar algo que diseñamos para su forma de moverse por el mundo, y que además nos dijera qué servía y qué no, fue la parte del proyecto que más me marcó.</p>
+      <p>Lo otro que me llevé fue el tema de la inclusión. Es una palabra que se usa mucho y que en la práctica muchas veces significa diseñar para el promedio y ponerle una etiqueta encima. Trabajar directamente con personas que quedan por fuera de ese promedio cambió cómo evalúo un proyecto: la pregunta dejó de ser si la solución funciona y pasó a ser para quién funciona, y a costa de quién.</p>
+      <p>Me interesa seguir trabajando en accesibilidad. Es de las pocas áreas del diseño donde una decisión mediocre no produce una experiencia mediocre, produce una barrera.</p>
+    </section>
+
+  </div>
+  <div class="read close">
+    <h2>Contacto</h2>
+    <p>Estoy buscando práctica profesional y roles junior en diseño de interacción, UX, sistemas de juego y QA. Bogotá o remoto.</p>
+    <div class="links">
+      <a class="solid" href="mailto:simonmerlano0@gmail.com">✉ simonmerlano0@gmail.com</a>
+      <a href="https://www.linkedin.com/in/simonmerlano" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="https://www.figma.com/design/xUblWLtFPVF0ywsPziCVoh/VISYNC?node-id=30-278" target="_blank" rel="noopener">Figma ↗</a>
+    </div>
+    <a class="nextcase" href="asfixia.html">
+      <span class="k">Siguiente proyecto</span>
+      <h3>Asfixia · Survival horror en Unity →</h3>
+    </a>
+    <footer>
+      <span>© 2026 Merlano Interactive</span>
+      <span>Diseño de interacción / Sistemas</span>
+    </footer>
+  </div>
+</main>
+<script>
+  var prog = document.getElementById('prog');
+  function tick(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    prog.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', tick, {passive:true});
+  window.addEventListener('resize', tick);
+  tick();
+  document.querySelectorAll('video.autoloop').forEach(function(v){
+    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var o=new IntersectionObserver(function(e){e.forEach(function(x){
+      if(x.isIntersecting){var p=x.target.play(); if(p&&p.catch)p.catch(function(){});}
+      else x.target.pause();
+    });},{threshold:.25});
+    o.observe(v);
+  });
+</script>
+</body>
+</html>

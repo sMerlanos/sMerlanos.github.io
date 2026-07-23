@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simón Merlano · Diseño de Interacción y Sistemas de Juego</title>
+<meta name="description" content="Simón Merlano, diseñador de interacción en Bogotá. Sistemas de juego, UX competitiva, accesibilidad y prototipado funcional en Unity y Figma." />
+
+<!-- Open Graph: para que el link se vea bien al compartir en LinkedIn / WhatsApp -->
+<meta property="og:title" content="Simón Merlano · Diseño de Interacción y Sistemas de Juego" />
+<meta property="og:description" content="Diseño de interacción y sistemas. Sistemas de juego, UX y accesibilidad, del concepto al build jugable." />
+<meta property="og:image" content="https://simonmerlano.github.io/og-cover.jpg" />
+<meta property="og:url" content="https://simonmerlano.github.io/" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='13' stroke='%23FF0048' stroke-width='3' fill='none'/%3E%3Cline x1='20' y1='2' x2='20' y2='11' stroke='%23FF0048' stroke-width='3'/%3E%3Cline x1='20' y1='29' x2='20' y2='38' stroke='%23FF0048' stroke-width='3'/%3E%3Cline x1='2' y1='20' x2='11' y2='20' stroke='%23FF0048' stroke-width='3'/%3E%3Cline x1='29' y1='20' x2='38' y2='20' stroke='%23FF0048' stroke-width='3'/%3E%3Ccircle cx='20' cy='20' r='2.4' fill='%23FF0048'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#22252E;
+    --bg-2:#2B2F3A;
+    --bg-3:#313542;
+    --line:#3C414F;
+    --line-soft:rgba(255,255,255,.07);
+    --ink:#F2F3F6;
+    --ink-2:#B9BFCC;          /* subido para AA */
+    --ink-3:#8E96A6;          /* subido desde #767E8E: ahora pasa AA en texto pequeño */
+    --red:#FF0048;
+    --red-soft:rgba(255,0,72,.12);
+    --radius:4px;
+    --maxw:1200px;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --disp:'Inter Tight','Inter',sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--red);color:#fff}
+  :focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:2px}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{animation:none !important;transition:none !important}
+    .hero-scope{display:none !important}
+  }
+
+  .skip{position:absolute;left:-9999px;top:0;background:var(--red);color:#fff;padding:10px 16px;z-index:200}
+  .skip:focus{left:12px;top:12px}
+
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 30%,transparent 100%);
+            mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 30%,transparent 100%);
+  }
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;position:relative;z-index:2}
+
+  .label{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+  .label .dot{color:var(--red)}
+
+  /* NAV */
+  header.nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(10px);background:rgba(34,37,46,.78);border-bottom:1px solid var(--line-soft)}
+  .nav-inner{max-width:var(--maxw);margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--disp);font-weight:800}
+  .brand .cross{width:26px;height:26px;flex:0 0 auto}
+  .brand .word{font-size:15px;line-height:1}
+  .brand .word b{color:var(--red)}
+  .brand .word span{display:block;font-family:var(--mono);font-weight:400;font-size:9px;letter-spacing:.34em;color:var(--ink-3);margin-top:3px}
+  nav.links{display:flex;gap:24px;align-items:center}
+  nav.links a{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--ink-2);transition:color .2s}
+  nav.links a:hover{color:var(--ink)}
+  nav.links a.cta{color:var(--ink);border:1px solid var(--line);padding:8px 14px;border-radius:var(--radius)}
+  nav.links a.cta:hover{border-color:var(--red);color:var(--red)}
+  @media(max-width:820px){
+    nav.links a.hideable{display:none}
+    .brand .word span{display:none}
+  }
+
+  /* HERO */
+  .hero{padding:150px 0 96px;position:relative}
+  .hero-scope{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .35s;
+    background:linear-gradient(rgba(255,0,72,.28) 1px,transparent 1px),linear-gradient(90deg,rgba(255,0,72,.28) 1px,transparent 1px),radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,0,72,.20),transparent 65%);
+    background-size:34px 34px,34px 34px,100% 100%;
+    -webkit-mask:radial-gradient(circle 170px at var(--mx,50%) var(--my,50%),#000 0%,rgba(0,0,0,.85) 46%,transparent 74%);
+            mask:radial-gradient(circle 170px at var(--mx,50%) var(--my,50%),#000 0%,rgba(0,0,0,.85) 46%,transparent 74%)}
+  .hero.scoping .hero-scope{opacity:1}
+  .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:end}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:34px}}
+  .hero .label{margin-bottom:26px}
+  /* ── TITULAR: cambiar aquí para lockear otra opción ── */
+  .hero h1{font-family:var(--disp);font-weight:900;line-height:.98;letter-spacing:-.022em;font-size:clamp(40px,6.6vw,92px)}
+  .hero h1 em{font-style:normal;color:var(--red)}
+  .hero .lede{margin-top:26px;max-width:640px;color:var(--ink-2);font-size:clamp(16px,1.7vw,19px);line-height:1.65}
+  .hero .lede strong{color:var(--ink);font-weight:600}
+  .hero-side{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:linear-gradient(160deg,rgba(255,255,255,.02),transparent);position:relative}
+  .hero-side .row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line-soft);font-family:var(--mono);font-size:12px}
+  .hero-side .row:last-child{border-bottom:none}
+  .hero-side .row span:first-child{color:var(--ink-3)}
+  .hero-side .row span:last-child{color:var(--ink);text-align:right}
+  .hero-side .row .r{color:var(--red)}
+  .brk{position:absolute;width:14px;height:14px;border:1px solid var(--red);opacity:.5}
+  .brk.tl{top:-1px;left:-1px;border-right:none;border-bottom:none}
+  .brk.br{bottom:-1px;right:-1px;border-left:none;border-top:none}
+
+  /* SECTIONS */
+  section{padding:92px 0;position:relative}
+  .sec-head{display:flex;align-items:baseline;gap:18px;margin-bottom:50px;flex-wrap:wrap}
+  .sec-head .num{font-family:var(--mono);font-size:12px;color:var(--red);letter-spacing:.1em}
+  .sec-head h2{font-family:var(--disp);font-weight:800;font-size:clamp(28px,3.6vw,42px);letter-spacing:-.015em}
+  .sec-head .sub{margin-left:auto;color:var(--ink-3);font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px}
+  @media(max-width:860px){.about-grid{grid-template-columns:1fr;gap:34px}}
+  .about p{color:var(--ink-2);margin-bottom:18px;font-size:16.5px;line-height:1.75}
+  .about p strong{color:var(--ink);font-weight:600}
+  .pillars{display:flex;flex-direction:column;gap:2px}
+  .pillar{border:1px solid var(--line-soft);border-left:2px solid var(--red);padding:20px 22px;background:rgba(255,255,255,.012)}
+  .pillar h4{font-family:var(--disp);font-size:17px;font-weight:700;margin-bottom:6px}
+  .pillar p{color:var(--ink-3);font-size:14px;margin:0;line-height:1.55}
+  .pillar .k{font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.2em;display:block;margin-bottom:10px}
+
+  /* PROJECTS */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:34px}
+  .filters button{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:transparent;border:1px solid var(--line);padding:9px 16px;border-radius:var(--radius);cursor:pointer;transition:.18s}
+  .filters button:hover{color:var(--ink);border-color:var(--ink-3)}
+  .filters button[aria-pressed="true"]{color:#fff;background:var(--red);border-color:var(--red)}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  @media(max-width:780px){.grid{grid-template-columns:1fr}}
+  .card{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--bg-2);display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .35s;position:relative}
+  .card:hover{transform:translateY(-4px);border-color:var(--red)}
+  /* toda la ficha es clicable, los links internos siguen funcionando */
+  .card .stretch::after{content:"";position:absolute;inset:0;z-index:2}
+  .card .clinks a{position:relative;z-index:3}
+  .card:hover .cbody h3{color:var(--red)}
+  .cbody h3{transition:color .25s}
+  .card.feat{grid-column:span 2}
+  @media(max-width:780px){.card.feat{grid-column:span 1}}
+  .cover{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--bg-3);border-bottom:1px solid var(--line)}
+  .card.feat .cover{aspect-ratio:21/8}
+  .cover img,.cover video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .cover .vlabel{position:absolute;bottom:12px;right:12px;z-index:3;font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);background:rgba(34,37,46,.72);border:1px solid var(--line);padding:4px 8px;border-radius:3px;backdrop-filter:blur(4px)}
+  .cover .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}
+  .cover .ph span{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.06em;line-height:1.7}
+  .cover .tag{position:absolute;top:14px;left:14px;z-index:3;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);background:rgba(34,37,46,.72);border:1px solid var(--line);padding:5px 9px;border-radius:3px;backdrop-filter:blur(4px)}
+  .cover .tag.r{color:#fff;background:var(--red);border-color:var(--red)}
+  .cbody{padding:22px 22px 24px;display:flex;flex-direction:column;flex:1}
+  .cbody .rmeta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .cbody .rmeta span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line-soft);padding:4px 8px;border-radius:3px}
+  .cbody h3{font-family:var(--disp);font-size:22px;font-weight:800;letter-spacing:-.015em;margin-bottom:9px}
+  .card.feat .cbody h3{font-size:27px}
+  .cbody .desc{color:var(--ink-2);font-size:14.5px;line-height:1.6;margin-bottom:18px;flex:1}
+  .cbody .desc b{color:var(--ink);font-weight:600}
+  .clinks{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto}
+  .clinks a{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink);border:1px solid var(--line);padding:8px 12px;border-radius:3px;transition:.18s;display:inline-flex;align-items:center;gap:7px}
+  .clinks a:hover{border-color:var(--red);color:var(--red)}
+  .clinks a.solid{background:var(--red);border-color:var(--red);color:#fff}
+  .clinks a.solid:hover{background:#e60041}
+
+  /* CAPABILITIES */
+  .caps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:780px){.caps{grid-template-columns:1fr}}
+  .cap{border:1px solid var(--line-soft);padding:26px 24px;border-radius:var(--radius);background:rgba(255,255,255,.012)}
+  .cap .n{font-family:var(--mono);font-size:11px;color:var(--red);letter-spacing:.1em}
+  .cap h4{font-family:var(--disp);font-size:19px;font-weight:700;margin:14px 0 8px}
+  .cap p{color:var(--ink-3);font-size:14px;line-height:1.6}
+  .cap ul{list-style:none;margin-top:14px;display:flex;flex-wrap:wrap;gap:7px}
+  .cap ul li{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);border:1px solid var(--line-soft);padding:5px 9px;border-radius:3px}
+
+  /* CONTACT */
+  .contact{border-top:1px solid var(--line);padding:92px 0 56px}
+  .contact h2{font-family:var(--disp);font-weight:900;font-size:clamp(34px,5.6vw,72px);letter-spacing:-.025em;line-height:1}
+  .contact h2 em{font-style:normal;color:var(--red)}
+  .contact .lede{color:var(--ink-2);max-width:540px;margin:24px 0 38px;font-size:17px}
+  .contact-links{display:flex;gap:12px;flex-wrap:wrap}
+  .contact-links a{font-family:var(--mono);font-size:13px;letter-spacing:.06em;border:1px solid var(--line);padding:14px 22px;border-radius:var(--radius);transition:.2s;display:inline-flex;align-items:center;gap:10px}
+  .contact-links a:hover{border-color:var(--red);color:var(--red);transform:translateY(-2px)}
+  .contact-links a.solid{background:var(--red);border-color:var(--red);color:#fff}
+  .contact-links a.solid:hover{background:#e60041}
+  footer{border-top:1px solid var(--line-soft);margin-top:70px;padding:30px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+  footer .label{font-size:10px}
+
+  /* crosshair: SOLO en el hero, y desactivado en táctil / reduced-motion */
+  .hero{--cursorless:1}
+  @media (pointer:fine) and (prefers-reduced-motion:no-preference){
+    .hero.scoping{cursor:none}
+  }
+  .xhair{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;z-index:150;pointer-events:none;opacity:0;transition:opacity .18s}
+  .xhair::before,.xhair::after{content:"";position:absolute;background:var(--red)}
+  .xhair::before{left:50%;top:0;width:1.5px;height:100%;transform:translateX(-50%)}
+  .xhair::after{top:50%;left:0;height:1.5px;width:100%;transform:translateY(-50%)}
+  .xhair i{position:absolute;inset:8px;border:1.5px solid var(--red);border-radius:50%}
+  .xhair.on{opacity:1}
+
+  .rv{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#proyectos">Saltar a proyectos</a>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand" aria-label="Inicio, Merlano Interactive">
+      <svg class="cross" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <circle cx="20" cy="20" r="13" stroke="#FF0048" stroke-width="2"/>
+        <line x1="20" y1="0" x2="20" y2="11" stroke="#F2F3F6" stroke-width="2"/>
+        <line x1="20" y1="29" x2="20" y2="40" stroke="#F2F3F6" stroke-width="2"/>
+        <line x1="0" y1="20" x2="11" y2="20" stroke="#F2F3F6" stroke-width="2"/>
+        <line x1="29" y1="20" x2="40" y2="20" stroke="#F2F3F6" stroke-width="2"/>
+        <circle cx="20" cy="20" r="2.4" fill="#FF0048"/>
+      </svg>
+      <span class="word">MERLANO<b>.</b><span>INTERACTIVE</span></span>
+    </a>
+    <nav class="links">
+      <a class="hideable" href="#sobre">SOBRE</a>
+      <a class="hideable" href="#proyectos">PROYECTOS</a>
+      <a class="hideable" href="#capacidades">CAPACIDADES</a>
+      <a class="cta" href="CV_Simon_Merlano_Sarmiento.pdf" download>↓ CV</a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+<div class="hero wrap" id="hero">
+  <div class="hero-scope" id="heroScope" aria-hidden="true"></div>
+  <div class="hero-grid">
+    <div>
+      <p class="label rv in">SIMÓN MERLANO <span class="dot">/</span> DISEÑO DE INTERACCIÓN · BOGOTÁ, CO</p>
+      <!-- TITULAR (lockeado). Alternativas guardadas:
+           - Diseño interfaces y <em>sistemas de juego</em>.
+           - Diseñador de interacción. <em>Sistemas, UX y feel</em>.
+           - Diseño productos por cómo <em>se comportan</em>. -->
+      <h1 class="rv in">Diseño de interacción<br>y <em>sistemas</em>.</h1>
+      <p class="lede rv in">Diseño productos digitales y sistemas interactivos. Me interesa cómo se comportan las cosas: el flujo de una app, la lógica de un sistema, la respuesta de una mecánica. Trabajo desde la investigación con usuarios hasta el prototipo que se puede probar. Último semestre de Diseño Interactivo en la Universidad Jorge Tadeo Lozano.</p>
+    </div>
+    <aside class="hero-side rv in">
+      <span class="brk tl"></span><span class="brk br"></span>
+      <div class="row"><span>Rol</span><span>Diseñador de Interacción</span></div>
+      <div class="row"><span>Foco</span><span>Producto · Sistemas · UX</span></div>
+      <div class="row"><span>Stack</span><span>Figma · Unity · C#</span></div>
+      <div class="row"><span>Estado</span><span><span class="r">●</span> Abierto a prácticas</span></div>
+      <div class="row"><span>Formación</span><span>Dis. Interactivo · UTadeo</span></div>
+    </aside>
+  </div>
+</div>
+
+<!-- SOBRE -->
+<section id="sobre">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="num">01</span><h2>El enfoque</h2><span class="sub">Statement</span></div>
+    <div class="about-grid">
+      <div class="about rv">
+        <p>Mi trabajo parte de la mediación entre <strong>usuario y sistema</strong>: definir reglas, flujos y comportamientos, y construir mecánicas que responden de forma predecible y precisa.</p>
+        <p>El método es iterativo. Probar, ajustar y volver a probar: leer el error, reducir la fricción y eliminar lo innecesario hasta que la interacción se siente natural.</p>
+        <p>El objetivo son <strong>experiencias funcionales</strong>, donde la claridad y el control guían la acción. El sistema acompaña al usuario sin interferir, para que la atención quede en la decisión y no en la interfaz.</p>
+      </div>
+      <div class="pillars rv">
+        <div class="pillar"><span class="k">01 / PRINCIPIO</span><h4>Claridad antes que adorno</h4><p>Si el usuario tiene que pensar en la interfaz, el diseño falló. La interfaz desaparece; la decisión queda.</p></div>
+        <div class="pillar"><span class="k">02 / PRINCIPIO</span><h4>El error como dato</h4><p>Cada punto de fricción es información. Iterar es leer ese error y eliminarlo, no defenderlo.</p></div>
+        <div class="pillar"><span class="k">03 / PRINCIPIO</span><h4>Cómo responde, no cuánto hace</h4><p>Una función mal calibrada estorba más de lo que aporta. Vengo de jugar competitivo, y eso me entrenó el ojo para el ritmo y el peso de cada respuesta.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROYECTOS -->
+<section id="proyectos">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="num">02</span><h2>Proyectos</h2><span class="sub">De juegos a hardware · 2024–2026</span></div>
+
+    <div class="filters rv" role="group" aria-label="Filtrar proyectos">
+      <button data-f="all" aria-pressed="true">Todos</button>
+      <button data-f="game" aria-pressed="false">Game Design</button>
+      <button data-f="ux" aria-pressed="false">UX · UI · Producto</button>
+    </div>
+
+    <div class="grid" id="grid">
+
+      <article class="card feat" data-cat="ux">
+        <div class="cover">
+          <span class="tag r">Destacado · Accesibilidad</span>
+          <svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="800" height="300" fill="#16181f"/>
+            <g stroke="#FF0048" fill="none" opacity="0.5" stroke-width="2">
+              <circle cx="150" cy="150" r="42"/><circle cx="150" cy="150" r="82"/>
+              <circle cx="150" cy="150" r="122" opacity="0.7"/><circle cx="150" cy="150" r="162" opacity="0.45"/>
+            </g>
+            <circle cx="150" cy="150" r="9" fill="#F2F3F6"/>
+            <g fill="#FF0048" opacity="0.9">
+              <circle cx="560" cy="120" r="6"/><circle cx="560" cy="150" r="6"/><circle cx="560" cy="180" r="6"/>
+              <circle cx="590" cy="120" r="6"/><circle cx="590" cy="180" r="6"/>
+              <circle cx="640" cy="120" r="6"/><circle cx="640" cy="150" r="6"/>
+              <circle cx="670" cy="150" r="6"/><circle cx="670" cy="180" r="6"/>
+              <circle cx="720" cy="120" r="6"/><circle cx="720" cy="150" r="6"/><circle cx="720" cy="180" r="6"/>
+            </g>
+            <text x="300" y="158" fill="#F2F3F6" font-family="JetBrains Mono,monospace" font-size="40" letter-spacing="8" font-weight="700">ViSync</text>
+            <text x="302" y="184" fill="#8E96A6" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="5">ULTRASONIDO · HÁPTICA · BRAILLE</text>
+          </svg>
+        </div>
+        <div class="cbody">
+          <div class="rmeta"><span>UX/UI + Hardware</span><span>Accesibilidad</span><span>2025</span></div>
+          <h3><a class="stretch" href="visync.html" style="text-decoration:none">ViSync</a></h3>
+          <p class="desc">Sistema de tres módulos para personas con discapacidad visual: gorra ultrasónica háptica, app de emergencias por NFC e interfaz Braille. Investigación con usuarios y con el director del INCI, y 300 horas de desarrollo sobre Arduino.</p>
+          <div class="clinks">
+            <a class="solid" href="visync.html">Ver proyecto →</a>
+            <a href="https://www.figma.com/design/xUblWLtFPVF0ywsPziCVoh/VISYNC?node-id=30-278" target="_blank" rel="noopener">Figma ↗</a>
+          </div>
+        </div>
+      </article>
+      <article class="card feat" data-cat="game">
+        <div class="cover">
+          <span class="tag r">Destacado · Survival Horror</span>
+          <svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="800" height="300" fill="#16181f"/>
+            <g stroke="#FF0048" fill="none" opacity="0.55">
+              <ellipse cx="120" cy="60" rx="150" ry="150"/><ellipse cx="120" cy="60" rx="110" ry="120"/>
+              <ellipse cx="120" cy="60" rx="70" ry="90"/><ellipse cx="120" cy="60" rx="34" ry="56"/>
+              <line x1="-30" y1="60" x2="270" y2="60"/><line x1="120" y1="-90" x2="120" y2="210"/>
+            </g>
+            <g stroke="#FF0048" fill="none" opacity="0.4">
+              <ellipse cx="690" cy="250" rx="150" ry="150"/><ellipse cx="690" cy="250" rx="105" ry="118"/>
+              <ellipse cx="690" cy="250" rx="60" ry="80"/>
+            </g>
+            <text x="400" y="150" text-anchor="middle" fill="#F2F3F6" font-family="JetBrains Mono,monospace" font-size="56" letter-spacing="14" font-weight="700">ASFIXIA</text>
+            <text x="400" y="182" text-anchor="middle" fill="#8E96A6" font-family="JetBrains Mono,monospace" font-size="12" letter-spacing="6">NIVEL DE ANSIEDAD</text>
+            <rect x="280" y="196" width="240" height="10" fill="none" stroke="#3C414F"/>
+            <rect x="280" y="196" width="150" height="10" fill="#8c0226"/>
+          </svg>
+        </div>
+        <div class="cbody">
+          <div class="rmeta"><span>Game Design / Dev</span><span>Unity 3D</span><span>2024</span></div>
+          <h3><a class="stretch" href="asfixia.html" style="text-decoration:none">Asfixia <span style="color:var(--ink-3);font-weight:500;font-size:.7em">(Anxiety)</span></a></h3>
+          <p class="desc">Survival horror donde la ansiedad del protagonista es el sistema. Una barra con tres estados deforma el entorno, y cuando llega al tope el juego deja de responder de forma confiable. Referentes: Amnesia y Hellblade.</p>
+          <div class="clinks">
+            <a class="solid" href="asfixia.html">Ver proyecto →</a>
+            <a href="https://checho-l.itch.io/asfixia" target="_blank" rel="noopener">▶ itch.io ↗</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="game">
+        <div class="cover">
+          <span class="tag">Unity Mobile</span>
+          <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="400" height="225" fill="#1b1e26"/>
+            <g opacity="0.92">
+              <rect x="120" y="56" width="46" height="46" rx="6" fill="#FFC300"/>
+              <rect x="176" y="44" width="46" height="46" rx="6" fill="#0015FF"/>
+              <rect x="232" y="56" width="46" height="46" rx="6" fill="#FF0048"/>
+              <rect x="148" y="104" width="46" height="46" rx="6" fill="#5870EA"/>
+              <rect x="204" y="104" width="46" height="46" rx="6" fill="#FFC300"/>
+            </g>
+            <rect x="120" y="166" width="160" height="30" rx="5" fill="none" stroke="#3C414F"/>
+            <g fill="#3C414F"><rect x="126" y="172" width="18" height="18" rx="3"/><rect x="148" y="172" width="18" height="18" rx="3"/></g>
+          </svg>
+        </div>
+        <div class="cbody">
+          <div class="rmeta"><span>Game Design / Dev</span><span>Unity 2D</span><span>2024</span></div>
+          <h3><a class="stretch" href="mahjong.html" style="text-decoration:none">Mahjong Colombia</a></h3>
+          <p class="desc">Match-3 para Android con iconografía colombiana. Diez niveles con dificultad progresiva, sistema de capas y una bandeja de seis espacios que convierte cada selección en una decisión con costo.</p>
+          <div class="clinks">
+            <a class="solid" href="mahjong.html">Ver proyecto →</a>
+            <a href="https://s1monm3rlano.itch.io/mahjong-colombia" target="_blank" rel="noopener">▶ Jugar ↗</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="ux">
+        <div class="cover">
+          <span class="tag">AR + QR · Mobile</span>
+          <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="400" height="225" fill="#1b1e26"/>
+            <rect x="150" y="34" width="100" height="157" rx="13" fill="none" stroke="#3C414F" stroke-width="2"/>
+            <g stroke="#FF0048" stroke-width="3" fill="none">
+              <path d="M168 70 h14 M168 70 v14"/><path d="M232 70 h-14 M232 70 v14"/>
+              <path d="M168 156 h14 M168 156 v-14"/><path d="M232 156 h-14 M232 156 v-14"/>
+            </g>
+            <path d="M178 105 q22 -18 44 0 q6 22 -8 30 q-22 8 -34 -4 q-8 -14 -2 -26 z" fill="#3C414F"/>
+            <line x1="160" y1="113" x2="240" y2="113" stroke="#FF0048" stroke-width="1.5" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="cbody">
+          <div class="rmeta"><span>UX/UI</span><span>AR + QR</span><span>2025</span></div>
+          <h3><a class="stretch" href="carnscan.html" style="text-decoration:none">Cárnicos Quirigüá — CarnScan</a></h3>
+          <p class="desc">El cliente escanea un QR y ve el corte iluminado sobre una vaca en realidad aumentada. El carnicero recibe un panel con estadísticas. Salió de entrevistar a los carniceros de la plaza del Quirigüá, que se sienten rezagados frente a las grandes cadenas.</p>
+          <div class="clinks">
+            <a class="solid" href="carnscan.html">Ver proyecto →</a>
+            
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="ux">
+        <div class="cover">
+          <span class="tag">Mobile · Eventos</span>
+          <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="400" height="225" fill="#1b1e26"/>
+            <g fill="#FF0048">
+              <rect x="70" y="100" width="7" height="25" rx="3"/><rect x="86" y="80" width="7" height="65" rx="3"/>
+              <rect x="102" y="60" width="7" height="105" rx="3"/><rect x="118" y="92" width="7" height="41" rx="3"/>
+              <rect x="134" y="48" width="7" height="129" rx="3"/><rect x="150" y="84" width="7" height="57" rx="3" fill="#F2F3F6"/>
+              <rect x="166" y="68" width="7" height="89" rx="3"/><rect x="182" y="100" width="7" height="25" rx="3"/>
+              <rect x="198" y="56" width="7" height="113" rx="3"/><rect x="214" y="88" width="7" height="49" rx="3" fill="#F2F3F6"/>
+              <rect x="230" y="72" width="7" height="81" rx="3"/><rect x="246" y="96" width="7" height="33" rx="3"/>
+              <rect x="262" y="60" width="7" height="105" rx="3"/><rect x="278" y="84" width="7" height="57" rx="3"/>
+              <rect x="294" y="100" width="7" height="25" rx="3"/><rect x="310" y="76" width="7" height="73" rx="3"/>
+              <rect x="326" y="92" width="7" height="41" rx="3"/>
+            </g>
+          </svg>
+        </div>
+        <div class="cbody">
+          <div class="rmeta"><span>UX/UI</span><span>Mobile</span><span>2024</span></div>
+          <h3><a class="stretch" href="fep.html" style="text-decoration:none">FEP App</a></h3>
+          <p class="desc">Interfaz móvil de gestión de contenidos para un festival. El reto estaba en la arquitectura de información: mucha programación, horarios cruzados y un usuario que decide de pie y con afán.</p>
+          <div class="clinks">
+            <a class="solid" href="fep.html">Ver proyecto →</a>
+            
+          </div>
+        </div>
+      </article>
+
+
+    </div>
+  </div>
+</section>
+
+<!-- CAPACIDADES -->
+<section id="capacidades">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="num">03</span><h2>Capacidades</h2><span class="sub">Qué hago bien</span></div>
+    <div class="caps">
+      <div class="cap rv"><span class="n">/ A</span><h4>Diseño de sistemas y mecánicas</h4><p>Reglas, loops, economías y curvas de dificultad. Documentación GDD/TDD que un equipo puede ejecutar.</p><ul><li>GDD</li><li>Balance</li><li>Loops</li><li>Curva de flow</li><li>Systems</li></ul></div>
+      <div class="cap rv"><span class="n">/ B</span><h4>Prototipado funcional</h4><p>Del concepto al build jugable. Implemento y depuro sistemas en Unity para probar el feel, no solo describirlo.</p><ul><li>Unity</li><li>C#</li><li>Construct 3</li><li>Debugging</li><li>Playtesting</li></ul></div>
+      <div class="cap rv"><span class="n">/ C</span><h4>UX e interfaz</h4><p>Arquitectura de información, wireframes y prototipos de alta fidelidad. Design systems y HUD que no estorban.</p><ul><li>Figma</li><li>Wireframing</li><li>HUD/UI</li><li>Design systems</li><li>Research</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="contact" id="contacto">
+  <div class="wrap">
+    <div class="rv">
+      <p class="label" style="margin-bottom:22px">04 <span class="dot">/</span> CONTACTO</p>
+      <h2>Hablemos de<br><em>sistemas.</em></h2>
+      <p class="lede">Disponible para prácticas y roles junior en diseño de interacción, UX, sistemas/gameplay design y QA. Bogotá o remoto.</p>
+      <div class="contact-links">
+        <a class="solid" href="mailto:simonmerlano0@gmail.com">✉ simonmerlano0@gmail.com</a>
+        <a href="https://www.linkedin.com/in/simonmerlano" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="CV_Simon_Merlano_Sarmiento.pdf" download>↓ Descargar CV</a>
+        <a href="https://github.com/simonmerlano" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </div>
+    <footer>
+      <span class="label">© 2026 MERLANO INTERACTIVE · SIMÓN MERLANO</span>
+      <span class="label">DISEÑO DE INTERACCIÓN <span class="dot">/</span> SISTEMAS DE JUEGO</span>
+    </footer>
+  </div>
+</section>
+
+<div class="xhair" id="xhair" aria-hidden="true"><i></i></div>
+
+<script>
+  // reveal on scroll
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.12});
+  document.querySelectorAll('.rv:not(.in)').forEach(function(el){ io.observe(el); });
+
+  // filtros con aria-pressed accesible
+  var btns = document.querySelectorAll('.filters button');
+  var cards = document.querySelectorAll('#grid .card');
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      btns.forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      b.setAttribute('aria-pressed','true');
+      var f = b.dataset.f;
+      cards.forEach(function(c){
+        c.style.display = (f==='all' || c.dataset.cat===f) ? '' : 'none';
+      });
+    });
+  });
+
+  // crosshair SOLO en el hero
+  (function(){
+    var hero = document.getElementById('hero');
+    var scope = document.getElementById('heroScope');
+    var x = document.getElementById('xhair');
+    if(!hero || !scope || !x) return;
+    var fine = window.matchMedia('(pointer:fine)').matches;
+    var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    if(!fine || reduce) return;
+    hero.addEventListener('mousemove', function(e){
+      var r = hero.getBoundingClientRect();
+      scope.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      scope.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      hero.classList.add('scoping');
+      x.style.transform = 'translate('+e.clientX+'px,'+e.clientY+'px)';
+      x.classList.add('on');
+    });
+    hero.addEventListener('mouseleave', function(){
+      hero.classList.remove('scoping');
+      x.classList.remove('on');
+    });
+  })();
+</script>
+</body>
+</html>

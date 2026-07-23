@@ -1,0 +1,30 @@
+PORTAFOLIO SIMON MERLANO
+URL final: https://simonmerlano.github.io
+
+SI YA SUBISTE Y QUEDO MAL
+ Entra al repo. Si ves una carpeta llamada "portafolio",
+ quedo mal. Para arreglarlo:
+   1. Entra a la carpeta "portafolio"
+   2. Arriba a la derecha, boton "..." > "Delete directory"
+   3. Confirma con "Commit changes"
+   4. Vuelve a subir siguiendo los pasos de abajo
+
+COMO SUBIR (todo de una)
+ 1. En el repo, click "Add file" > "Upload files"
+ 2. Abre esta carpeta en tu computador
+ 3. Selecciona TODO lo de adentro (Ctrl+A o Cmd+A):
+    los .html, los .jpg, el .pdf, y las carpetas img/ y media/
+ 4. Arrastralos juntos a la ventana de GitHub
+ 5. Abajo escribe "portafolio" y click "Commit changes"
+ 6. Settings > Pages > Branch: main, carpeta "/ (root)" > Save
+ 7. Espera 2 minutos y entra a simonmerlano.github.io
+
+ La clave: arrastrar el CONTENIDO, no la carpeta que lo envuelve.
+ Los .html deben quedar en la raiz del repositorio.
+
+CONTENIDO
+ index.html visync.html asfixia.html mahjong.html carnscan.html fep.html
+ CV_Simon_Merlano_Sarmiento.pdf
+ og-cover.jpg og-visync.jpg
+ img/    fotos y capturas
+ media/  videos
