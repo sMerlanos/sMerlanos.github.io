@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cárnicos Quirigüá — CarnScan · Merlano Interactive</title>
+<meta name="description" content="App que identifica cortes de res con QR y realidad aumentada, más panel web con estadísticas. Investigación con carniceros de la plaza del Quirigüá." />
+<meta property="og:title" content="Cárnicos Quirigüá — CarnScan" />
+<meta property="og:description" content="App con QR y realidad aumentada para identificar cortes de res, más panel con estadísticas para el carnicero." />
+<meta property="og:image" content="https://merlano.github.io/og-visync.jpg" />
+<meta property="og:type" content="article" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#22252E;--bg-2:#2B2F3A;--line:#3C414F;--line-soft:rgba(255,255,255,.07);
+    --ink:#F2F3F6;--ink-2:#B9BFCC;--ink-3:#8E96A6;--red:#FF0048;--red-soft:rgba(255,0,72,.10);
+    --radius:4px;--readw:660px;
+    --mono:'JetBrains Mono',ui-monospace,monospace;--disp:'Inter Tight','Inter',sans-serif;--body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  ::selection{background:var(--red);color:#fff}
+  :focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:2px}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none !important;transition:none !important}}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--red);color:#fff;padding:10px 16px;z-index:100}
+  .skip:focus{left:12px;top:12px}
+  .prog{position:fixed;top:0;left:0;height:2px;background:var(--red);width:0;z-index:60}
+  header.nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(34,37,46,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft)}
+  .nav-in{max-width:1080px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+  .back{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--ink-2);text-decoration:none}
+  .back:hover{color:var(--red)}
+  .navcta{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-decoration:none;border:1px solid var(--line);padding:8px 14px;border-radius:var(--radius)}
+  .navcta:hover{border-color:var(--red);color:var(--red)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .read{max-width:var(--readw);margin:0 auto}
+  .hero{padding:130px 0 48px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
+  .eyebrow b{color:var(--red);font-weight:500}
+  h1{font-family:var(--disp);font-weight:900;font-size:clamp(38px,6vw,68px);line-height:1.02;letter-spacing:-.025em;margin:18px 0 20px}
+  .standfirst{font-size:clamp(18px,2.2vw,21px);color:var(--ink-2);line-height:1.6;max-width:720px}
+  .meta{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:56px}
+  .meta-in{max-width:1080px;margin:0 auto;padding:22px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .meta dt{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
+  .meta dd{font-size:14px;color:var(--ink);line-height:1.4}
+  @media(max-width:720px){.meta-in{grid-template-columns:repeat(2,1fr);gap:16px}}
+  main.wrap{padding-top:112px;padding-bottom:40px}
+  main section:first-child h2{margin-top:0}
+  section{margin-bottom:76px}
+  h2{font-family:var(--disp);font-weight:800;font-size:clamp(26px,3.4vw,34px);line-height:1.15;letter-spacing:-.02em;margin-bottom:20px}
+  h2 .n{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.2em;color:var(--red);display:block;margin-bottom:12px}
+  h3{font-family:var(--disp);font-weight:700;font-size:20px;margin:34px 0 12px;letter-spacing:-.01em}
+  p{margin-bottom:20px;color:var(--ink-2)}
+  p strong{color:var(--ink);font-weight:600}
+  main ul{margin:0 0 20px 20px;color:var(--ink-2)}
+  main li{margin-bottom:9px}
+  .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0}
+  @media(max-width:600px){.stat{grid-template-columns:1fr}}
+  .stat div{border:1px solid var(--line-soft);border-left:2px solid var(--red);border-radius:var(--radius);padding:18px}
+  .stat .big{font-family:var(--disp);font-size:28px;font-weight:800;color:var(--ink);line-height:1}
+  .stat .lbl{font-size:13px;color:var(--ink-3);margin-top:8px;display:block}
+  .mod{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:var(--bg-2);margin-bottom:14px}
+  .mod .mn{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:10px;display:block}
+  .mod h4{font-family:var(--disp);font-size:18px;font-weight:700;margin-bottom:6px}
+  .mod p{font-size:15px;margin:0;color:var(--ink-2)}
+  table{width:100%;border-collapse:collapse;margin:26px 0;font-size:15px}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line-soft)}
+  th{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);border-bottom:1px solid var(--line)}
+  td:first-child{font-weight:600;color:var(--ink)}
+  td{color:var(--ink-2)}
+  .note{border-left:2px solid var(--red);background:var(--red-soft);padding:24px 26px 6px;border-radius:0 var(--radius) var(--radius) 0;margin:30px 0}
+  figure{margin:38px 0}
+  figure img,figure video{width:100%;display:block;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
+  figure video.tall{max-width:360px;margin:0 auto}
+  figure video{background:#000}
+  figure video::-webkit-media-controls-panel{background:linear-gradient(transparent,rgba(0,0,0,.7))}
+  .ph{width:100%;aspect-ratio:16/9;border:1px dashed var(--line);border-radius:var(--radius);background:var(--bg-2);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+  .ph span{font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.06em;line-height:1.7;max-width:420px}
+  figcaption{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:10px;letter-spacing:.03em;line-height:1.65}
+  .full{max-width:1080px;margin-left:auto;margin-right:auto}
+  .close{border-top:1px solid var(--line);padding:56px 0 0}
+  .close h2{font-size:clamp(28px,4vw,40px)}
+  .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+  .links a{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-decoration:none;border:1px solid var(--line);padding:12px 18px;border-radius:var(--radius)}
+  .links a:hover{border-color:var(--red);color:var(--red)}
+  .links a.solid{background:var(--red);border-color:var(--red);color:#fff}
+  .links a.solid:hover{background:#e60041;color:#fff}
+  .nextcase{display:block;text-decoration:none;border:1px solid var(--line);border-radius:var(--radius);padding:26px;margin:64px 0 0;background:var(--bg-2)}
+  .nextcase:hover{border-color:var(--red)}
+  .nextcase .k{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+  .nextcase h3{margin:8px 0 0;font-size:24px}
+  footer{border-top:1px solid var(--line-soft);margin-top:64px;padding:26px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  footer span{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="prog" id="prog" aria-hidden="true"></div>
+<header class="nav">
+  <div class="nav-in">
+    <a class="back" href="index.html">← MERLANO<span style="color:var(--red)">.</span>INTERACTIVE</a>
+    <a class="navcta" href="CV_Simon_Merlano_Sarmiento.pdf" download>↓ CV</a>
+  </div>
+</header>
+<div class="wrap hero">
+  <p class="eyebrow">CASO DE ESTUDIO <b>/</b> UX/UI · AR + QR · APP Y PANEL WEB</p>
+  <h1>CarnScan</h1>
+  <p class="standfirst">Una app que identifica cortes de res con QR y realidad aumentada, más un panel web con estadísticas para el carnicero. Salió de sentarnos a hablar con los carniceros de la plaza del Quirigüá.</p>
+</div>
+<div class="meta"><dl class="meta-in"><div><dt>Rol</dt><dd>UX/UI Designer</dd></div><div><dt>Tipo</dt><dd>App móvil + panel web</dd></div><div><dt>Año</dt><dd>2025</dd></div><div><dt>Herramientas</dt><dd>Figma · AR · QR</dd></div></dl></div>
+<main id="contenido" class="wrap">
+  <div class="read">
+
+    <section>
+      <h2><span class="n">01 / CONTEXTO</span>El encargo</h2>
+      <p>Cárnicos Quirigüá es un local de la plaza de mercado del Quirigüá, en Bogotá. Llegamos con un encargo abierto y salimos con dos problemas concretos que no habíamos anticipado.</p>
+      <figure class="full">
+        <video class="autoloop" poster="img/carnscan-cover.jpg" controls muted loop playsinline preload="metadata" aria-label="Flujo de escaneo de CarnScan">
+          <source src="media/carnscan-loop.mp4" type="video/mp4">
+        </video>
+        <figcaption>Flujo de escaneo en el prototipo.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2><span class="n">02 / INVESTIGACIÓN</span>Ir a la plaza y preguntar</h2>
+      <p>Hicimos encuestas y entrevistas en persona con los carniceros de la plaza de mercado del Quirigüá. De ahí salieron los dolores reales, que resultaron ser dos y de lados opuestos del mostrador.</p>
+
+      <div class="mod">
+        <span class="mn">Dolor 01 · Del lado del cliente</span>
+        <h4>Nadie sabe qué está comprando</h4>
+        <p>La gente no tiene información sobre los cortes. No sabe cuál es cuál, para qué sirve cada uno, cuánto cuesta ni cuándo hay descuento. Termina llevando siempre lo mismo o preguntando, y preguntar frena la compra.</p>
+      </div>
+
+      <div class="mod">
+        <span class="mn">Dolor 02 · Del lado del carnicero</span>
+        <h4>Sentir que te están dejando atrás</h4>
+        <p>Los carniceros nos dijeron que se sienten rezagados frente a Carulla, Éxito y las grandes cadenas, que tienen plata para invertir en tecnología para sus clientes. El local de plaza compite con el mismo producto pero sin ninguna de esas herramientas.</p>
+      </div>
+
+      <p>Ese segundo hallazgo fue el que cambió el proyecto. No estábamos haciendo una app para clientes. Estábamos haciendo una herramienta que le da a un negocio pequeño algo que hoy solo tienen las cadenas grandes.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">03 / DISEÑO</span>Dos productos para dos usuarios</h2>
+
+      <h3>Escanear en vez de buscar</h3>
+      <p>El cliente escanea el QR del corte que tiene enfrente. Elegimos escaneo y no un catálogo porque la carne está ahí, física, en el mostrador. Mandar a la persona a buscarla en una lista agrega un paso justo donde ya no hace falta.</p>
+      <figure class="full">
+        <img src="img/carnscan-qr.jpg" alt="Pantalla de escaneo de código QR con instrucciones y aviso de descuento" loading="lazy" />
+        <figcaption>La pantalla de escaneo lleva el descuento vigente abajo. Uno de los dolores era que la gente no se entera de las promociones.</figcaption>
+      </figure>
+
+      <h3>La vaca en realidad aumentada</h3>
+      <p>Después del escaneo, la app proyecta una vaca sobre la cámara con el corte escaneado iluminado. El resto de las partes quedan visibles y se pueden tocar para explorarlas.</p>
+      <p>Esto resuelve el problema de fondo. Un nombre de corte no le dice nada a quien no cocina, pero ver de qué parte del animal sale sí. Y como está sobre la cámara, la referencia queda anclada al lugar donde la persona está parada.</p>
+      <figure class="full">
+        <img src="img/carnscan-ar.jpg" alt="Vista en realidad aumentada: una vaca proyectada sobre la cámara con el corte escaneado resaltado en naranja" loading="lazy" />
+        <figcaption>El corte escaneado se resalta en naranja. Las demás partes siguen siendo tocables para explorar.</figcaption>
+      </figure>
+
+      <h3>El panel del carnicero</h3>
+      <p>El panel deja cambiar precios, inventario y descripciones sin depender de nadie. Si actualizar un precio requiere llamar a alguien, el sistema se abandona en dos semanas.</p>
+      <p>Pero la parte que responde al dolor real es la de estadísticas: productos más consultados, productos más comprados y facturación. Los carniceros nos dijeron que se sienten atrás de las grandes cadenas, y una de las cosas que esas cadenas tienen y ellos no son datos sobre lo que hace su clientela. Saber qué corte se consulta mucho pero se compra poco es información que hoy no tienen.</p>
+      <figure class="full">
+        <img src="img/carnscan-panel.jpg" alt="Panel de estadísticas del carnicero con productos más consultados, más comprados y facturación" loading="lazy" />
+        <figcaption>Panel de estadísticas. La diferencia entre lo consultado y lo comprado es la métrica más útil para el negocio.</figcaption>
+      </figure>
+
+      <p>El prototipo de media fidelidad tiene más de 30 pantallas entre las dos piezas.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">04 / HANDOFF</span>Sistema de componentes</h2>
+      <p>Documenté el sistema de componentes y la guía de estilos completa para que el equipo de desarrollo pudiera trabajar sin volver a preguntar cada detalle.</p>
+      <p>[Si tienes captura del sistema de componentes, ponla acá. Es de las cosas que más miran en roles de producto.]</p>
+    </section>
+
+    <section>
+      <div class="note">
+        <h2><span class="n">05 / SIGUIENTE PASO</span>De prototipo a producto</h2>
+        <p>Se quedó en prototipo. Nunca pasó a producto real, y ese salto es donde estaban las preguntas más difíciles: qué tan bien funciona el escaneo con la luz y el ruido visual de una plaza de mercado, si el carnicero de verdad mantiene la información actualizada cuando tiene fila, y si el cliente saca el celular estando de pie frente al mostrador.</p>
+        <p>Nada de eso se responde en Figma. El siguiente paso natural es una prueba en el local con carne real, luz de plaza y clientes que nunca han visto la app, midiendo cuántos completan el escaneo sin ayuda.</p>
+      </div>
+    </section>
+
+  </div>
+  <div class="read close">
+    <h2>Contacto</h2>
+    <p>Estoy buscando práctica profesional y roles junior en diseño de interacción, UX, sistemas de juego y QA. Bogotá o remoto.</p>
+    <div class="links">
+      <a class="solid" href="mailto:simonmerlano0@gmail.com">✉ simonmerlano0@gmail.com</a>
+      <a href="https://www.linkedin.com/in/simonmerlano" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="solid" href="https://www.figma.com/design/Ea9Ok808GJdR9Nwxy7QIsI/Carnicos-quirigua--Media-Fidelidad-?node-id=0-1" target="_blank" rel="noopener">Ver en Figma ↗</a>
+    </div>
+    <a class="nextcase" href="fep.html">
+      <span class="k">Siguiente proyecto</span>
+      <h3>FEP App · Interfaz de eventos →</h3>
+    </a>
+    <footer>
+      <span>© 2026 Merlano Interactive</span>
+      <span>Diseño de interacción / Sistemas</span>
+    </footer>
+  </div>
+</main>
+<script>
+  var prog = document.getElementById('prog');
+  function tick(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    prog.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', tick, {passive:true});
+  window.addEventListener('resize', tick);
+  tick();
+  document.querySelectorAll('video.autoloop').forEach(function(v){
+    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var o=new IntersectionObserver(function(e){e.forEach(function(x){
+      if(x.isIntersecting){var p=x.target.play(); if(p&&p.catch)p.catch(function(){});}
+      else x.target.pause();
+    });},{threshold:.25});
+    o.observe(v);
+  });
+</script>
+</body>
+</html>

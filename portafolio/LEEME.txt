@@ -1,0 +1,14 @@
+PORTAFOLIO SIMON MERLANO — merlano.github.io
+Abre index.html. No muevas archivos: img/ y media/ van al lado.
+
+PENDIENTES
+  CV_Simon_Merlano_Sarmiento.pdf   subir a la raiz
+  Corchetes [ ] restantes:
+    asfixia   tabla de estados, bucle de los conos de vision, resultado
+    visync    reto tecnico del Arduino
+    mahjong   que tomaste de Candy Crush y Mahjong Titans
+    carnscan  captura del sistema de componentes (opcional)
+
+PUBLICAR
+  Sube el contenido a la raiz del repo merlano.github.io
+  y activa GitHub Pages en Settings > Pages.
